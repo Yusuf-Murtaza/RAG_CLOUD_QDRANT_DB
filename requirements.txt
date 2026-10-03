@@ -1,0 +1,22 @@
+python-dotenv
+
+langchain
+langchain_core
+langchain_community
+
+#LLM Providers
+langchain_openrouter
+
+langchain_text_splitters
+
+# Vector Stores
+faiss-cpu
+
+#Notebooks
+jupyter
+ipykernel
+
+
+#Web App
+streamlit
+
