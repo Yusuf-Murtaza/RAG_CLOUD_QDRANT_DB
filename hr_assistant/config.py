@@ -29,7 +29,9 @@ DATA_FILE_PATH = os.path.join('data', 'hr_policy.txt')
 # if we don't save it then we need to ingest it again
 #3. Cloud based vectorstore like Pinecone, Weaviate, Milvus, etc.
 
-VECTOR_STORE_PATH = os.path.join('data', 'faiss_index')  # Path to store the FAISS index
+QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
+QDRANT_URL = os.environ.get("QDRANT_URL")
+QDRANT_COLLECTION_NAME = os.environ.get("QDRANT_COLLECTION_NAME", "hr_policy")  # Default collection name
 
 #MODEL
 #LLM & EMBEDDINGS_MODEL_NAME

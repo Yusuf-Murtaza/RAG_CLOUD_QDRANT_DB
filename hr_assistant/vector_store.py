@@ -1,7 +1,8 @@
 """Step 4. Store chunk embeddings in a vector database FAISS for efficient retrieval."""
 
 import os
-from langchain_community.vectorstores import FAISS
+from langchain_qdrant import Qdrant, QdrantVectorStore
+from qdrant_client import QdrantClient
 from hr_assistant import config
 from hr_assistant.embeddings import get_embeddings_model
 from hr_assistant.logger import get_logger
@@ -10,30 +11,46 @@ logger = get_logger(__name__)
 
 
 def build_vector_store(chunks):
-    """Embed every chunks and build a searchable faiss index in memory"""
-    logger.info(f"Building FAISS vectorstore from {len(chunks)} chunks.")
+    """Embed every chunks and upload it into Qdrant cloud collection"""
+    logger.info(
+        "Embedding %d chunks and uploading to Qdrant cloud collection..." % len(chunks),
+        config.QDRANT_COLLECTION_NAME
+    )
     embeddings_model = get_embeddings_model()
-    vector_store = FAISS.from_documents(chunks, embeddings_model)
-    logger.info("Built FAISS vectorstore in memory.")
+    vector_store = QdrantVectorStore.from_documents(
+        chunks, 
+        embedding = embeddings_model,
+        url = config.QDRANT_URL,
+        api_key = config.QDRANT_API_KEY,
+        collection_name = config.QDRANT_COLLECTION_NAME
+        )
+    logger.info("Uploaded to Qdrant collection %s" % config.QDRANT_COLLECTION_NAME)
     return vector_store
 
-#Save vectorstore to disk
-def save_vector_store(vectorstore, path :str =config.VECTOR_STORE_PATH)-> None:
-    """Save the FAISS vectorstore to disk so that it can be loaded later without re-embedding the documents."""
-    vectorstore.save_local(path)
-    logger.info(f"Saved FAISS vectorstore to {path}")
 
-def load_vector_store(path: str = config.VECTOR_STORE_PATH):
-    """Load the FAISS vectorstore from disk."""
-    logger.info(f"Loading FAISS vectorstore from {path}")
+def load_vector_store():
+    """Connect to Qdrant cloud collection that was already buit before"""
+    logger.info("Connecting to Qdrant cloud")
     embeddings_model = get_embeddings_model()
-    #allow_dangerous_deserialization=True is used to allow loading of the vectorstore 
-    # even if it was created with a different version of FAISS.
-    return FAISS.load_local(path, embeddings_model, allow_dangerous_deserialization=True)
+    
+    return QdrantVectorStore.from_documents(
+        embedding = embeddings_model,
+        url = config.QDRANT_URL,
+        api_key = config.QDRANT_API_KEY,
+        collection_name = config.QDRANT_COLLECTION_NAME
+        )
 
-def vector_store_exists(path: str = config.VECTOR_STORE_PATH) -> bool:
-    """Check if the FAISS vectorstore exists on disk."""
-    return os.path.exists(os.path.join(path, "index.faiss"))
+def vector_store_exists() -> bool:
+    """Check if the Qdrant store already exists.
+        If the Qdrant collection exists, it means the vector store has
+          been built before and we can load it instead of building it again.
+    """
+    client = QdrantClient(
+        url=config.QDRANT_URL,
+        api_key=config.QDRANT_API_KEY
+        )
+    return client.collection_exists(config.QDRANT_COLLECTION_NAME)
+
 
 def get_retriever(vectorstore, k: int = config.TOP_K_RESULTS):
     """Turn a vectorstore into a retriever that returns the top k most similar chunks for a given query."""

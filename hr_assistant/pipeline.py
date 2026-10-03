@@ -11,7 +11,6 @@ from hr_assistant.agent import create_hr_agent
 from hr_assistant.vector_store import (
     build_vector_store,
     load_vector_store,
-    save_vector_store,
     vector_store_exists,
     get_retriever
 )
@@ -21,11 +20,12 @@ from hr_assistant.guardrails import check_input, check_output, REFUSAL_MESSAGE
 
 logger = get_logger(__name__)
 
+#Data Ingestion
 def build_vector_store_for_document(file_path: str = config.DATA_FILE_PATH):
-    """Load + Save + Embed the given document, reusing the saved index if we have one"""
+    """Load + Save + Embed the given document, reusing the Qdrant cloud collection if we have one"""
     if vector_store_exists():   
-        print("Vector store already exists. Loading existing vector store...")
-        logger.info("Vector store already exists. Loading existing vector store...")
+        print("Found an existing Qdrant cloud collection. Loading existing Qdrant cloud collection...")
+        logger.info("Found an existing Qdrant cloud collection. Loading existing Qdrant cloud collection...")
         return load_vector_store()
     print("No Vector store found.. Building one from scratch..")
     logger.info("No Vector store found.. Building one from scratch..")
@@ -34,10 +34,10 @@ def build_vector_store_for_document(file_path: str = config.DATA_FILE_PATH):
     print(f"Loaded '{file_path}' and spint it into {len(chunks)} chunks")
 
     vector_store = build_vector_store(chunks)
-    save_vector_store(vector_store)
-    print("Vector store built and saved to disk for next time")
+    print("Vector store built and uploaded to Qdrant cloud collection.")
     return vector_store
 
+#Data Retrieval
 def build_hr_assistant(file_path: str = config.DATA_FILE_PATH):
     """Build the full RAG agent, ready to answer questions"""
     logger.info("Building HR assistant agent...")
