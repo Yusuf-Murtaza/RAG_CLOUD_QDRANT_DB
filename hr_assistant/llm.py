@@ -1,17 +1,11 @@
 """Step 6. Connect to the LLM (The brain of assistant)"""
 
-from langchain_openrouter import ChatOpenRouter
-from hr_assistant import config
+from hr_assistant.gateway import get_gateway_llm
 from hr_assistant.logger import get_logger
 
 logger = get_logger(__name__)
 
 def get_llm():
-    """Return the OpenRouter LLM model. Reads OPENROUTER_API_KEY from environment variables."""
-    logger.info(f"Loading LLM model: {config.LLM_MODEL_NAME}")
-    return ChatOpenRouter(
-        model_name=config.LLM_MODEL_NAME, 
-        max_tokens=2048,
-        temperature=0
-        )
-
+    """Return the Groq LLM model. Reads GROQ_API_KEY from environment variables."""
+    logger.info("Initializing LLM via Portkey....")
+    return get_gateway_llm()

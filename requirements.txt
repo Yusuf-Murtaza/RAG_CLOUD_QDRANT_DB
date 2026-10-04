@@ -6,7 +6,7 @@ langchain-community
 
 #LLM Providers
 langchain-openrouter
-
+langchain_groq
 langchain-text-splitters
 
 # Vector Stores
@@ -19,3 +19,9 @@ ipykernel
 
 #Web App
 streamlit
+
+#LLM Gateway
+portkey-ai
+langchain-openai
+
+#every gateway gives us a openai compatible request, so we can switch between them easily

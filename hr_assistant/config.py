@@ -6,8 +6,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Environment variables / secrets for API keys
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 JINA_API_KEY = os.environ.get("JINA_API_KEY")
+
+#GATEWAY
+PORTKEY_API_KEY = os.environ.get("PORTKEY_API_KEY")  # Portkey AI API key
+PORTKEY_CONFIG_ID = os.environ.get("PORTKEY_CONFIG_ID")
 
 #GUARD MODELS
 GUARD_MODEL_NAME = "openai/gpt-oss-safeguard-20b"  # Example guard model name
@@ -35,7 +39,7 @@ QDRANT_COLLECTION_NAME = os.environ.get("QDRANT_COLLECTION_NAME", "hr_policy")  
 
 #MODEL
 #LLM & EMBEDDINGS_MODEL_NAME
-LLM_MODEL_NAME = "qwen/qwen3.8-27b"
+LLM_MODEL_NAME = "openai/gpt-oss-120b"
 EMBEDDINGS_MODEL_NAME = "jina-embeddings-v2-base-en"  # Example embedding model name
 
 #CHUNK / TEXT SPLITTING CONFIG
@@ -54,8 +58,8 @@ Do not guess or create anything on your own
 
 def check_api_keys() -> None:
     """Check if the required API keys are set in the environment variables."""
-    if not OPENROUTER_API_KEY:
-        raise ValueError("OPENROUTER_API_KEY is not set. Please set it in the .env file.")
+    if not GROQ_API_KEY:
+        raise ValueError("GROQ_API_KEY is not set. Please set it in the .env file.")
     if not JINA_API_KEY:
         raise ValueError("JINA_API_KEY is not set. Please set it in the .env file.")
     

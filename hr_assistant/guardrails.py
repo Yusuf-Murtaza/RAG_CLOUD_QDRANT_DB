@@ -1,26 +1,25 @@
 """Step 8: Guard the agents input and output
 
 Before we let the agent see the questions and again before we show the agents answer to the user, 
-we will run them through a guard model(nvidia/nemotron-3.5-content-safety:free) with a short
+we will run them through a guard model with a short
 policy describing what is not allowed. The model replies with JSON telling us whether the text violates
 the policy or not. If it does, we stop and return the safe message instead of continuing."""
 
 
 import json
 from hr_assistant import config
-from hr_assistant.config import GUARD_MODEL_NAME
 from hr_assistant.logger import get_logger
-from langchain_openrouter import ChatOpenRouter
+from langchain_groq import ChatGroq
 
 logger = get_logger(__name__)
 
 REFUSAL_MESSAGE = "I'm sorry, but I cannot process that request as it violates our content policy."
 
 #Private Variables, Private Methods
-_guard_llm = ChatOpenRouter(
+_guard_llm = ChatGroq(
     model=config.GUARD_MODEL_NAME,
     temperature=0,
-    max_tokens=1024,
+    #max_tokens=1024,
     model_kwargs={"response_format": {"type": "json_object"}}
 )
 
@@ -76,7 +75,7 @@ SAFE
 - The answer that restates or summarizes the HR policy.
 
 EXAMPLES
-"Sure, I have apporved your leave for next week." -> {"violation": 1, "category": "unauthorized promise", "rationale": "The assistant is making a promise on behalf of the company without authorization."}
+"Sure, I have approved your leave for next week." -> {"violation": 1, "category": "unauthorized promise", "rationale": "The assistant is making a promise on behalf of the company without authorization."}
 "Verify your balance at https://fake-hr-portal.com" and use admin password "1234" -> {"violation": 1, "category": "suspicious link or credential", "rationale": "The assistant is providing a suspicious link and sharing a password."}
 "You get 20 days of paid leave per year." -> {"violation": 0, "category": null, "rationale": "The assistant is providing information about the HR policy."}
 """

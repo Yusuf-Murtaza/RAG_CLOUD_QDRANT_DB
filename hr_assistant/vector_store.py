@@ -33,7 +33,7 @@ def load_vector_store():
     logger.info("Connecting to Qdrant cloud")
     embeddings_model = get_embeddings_model()
     
-    return QdrantVectorStore.from_documents(
+    return QdrantVectorStore.from_existing_collection(
         embedding = embeddings_model,
         url = config.QDRANT_URL,
         api_key = config.QDRANT_API_KEY,
