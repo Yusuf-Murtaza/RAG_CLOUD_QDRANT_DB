@@ -20,8 +20,10 @@ ipykernel
 #Web App
 streamlit
 
+#every gateway gives us a openai compatible request, so we can switch between them easily
 #LLM Gateway
 portkey-ai
 langchain-openai
 
-#every gateway gives us a openai compatible request, so we can switch between them easily
+#Evaluations
+openevals

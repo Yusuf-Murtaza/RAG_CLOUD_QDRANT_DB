@@ -26,6 +26,7 @@ logger = get_logger(__name__)
 
 #My main model - application
 
+PRIMARY_PROVIDER = "@hrpolicynew"
 
 PRIMARY_TARGET = {"provider": "@hrpolicynew", 
                   "override_params": {"model": config.LLM_MODEL_NAME}}
